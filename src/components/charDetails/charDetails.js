@@ -1,6 +1,38 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
+import ThronesApi from '../../services/getRequest';
+
+
 export default class CharDetails extends Component {
+
+	gotService = new ThronesApi();
+
+	state = {
+		char: null
+	}
+
+	componentDidMount() {
+		this.updateChar();
+	}
+
+	componentDidUpdate(prevProps) {
+		if (this.props.charId !== prevProps) {
+			this.updateChar();
+		}
+	}
+
+	updateChar() {
+		const { charId } = this.props;
+		if (!charId) {
+			return
+		}
+		this.gotService.getCharacter(charId)
+			.then((char) => {
+				this.setState({
+					char
+				})
+			})
+	}
 
 	render() {
 		const CharDetailed = styled.div`
@@ -33,25 +65,29 @@ export default class CharDetails extends Component {
 			Term = styled.span`
 		font-weight: bold;`;
 
+		if (!this.state.char) {
+			return <span>Not selected</span>
+		}
+		const { name, gender, born, died, culture } = this.state.char;
 		return (
 			<CharDetailed>
-				<h4>John Snow</h4>
+				<h4>{name}</h4>
 				<Properties>
 					<OneProperty>
 						<Term>Gender</Term>
-						<span>male</span>
+						<span>{gender}</span>
 					</OneProperty>
 					<OneProperty>
 						<Term>Born</Term>
-						<span>1783</span>
+						<span>{born}</span>
 					</OneProperty>
 					<OneProperty>
 						<Term>Died</Term>
-						<span>1820</span>
+						<span>{died}</span>
 					</OneProperty>
 					<OneProperty>
 						<Term>Culture</Term>
-						<span>First</span>
+						<span>{culture}</span>
 					</OneProperty>
 				</Properties>
 			</CharDetailed>

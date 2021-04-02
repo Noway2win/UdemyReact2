@@ -4,21 +4,33 @@ import Header from '../header';
 import RandomChar from '../randomChar';
 import ItemList from '../itemList';
 import CharDetails from '../charDetails';
-
+import ErrorMessage from '../Error/error'
 
 
 export default class App extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			randomCharVisible: true
+			randomCharVisible: true,
+			selectedChar: null,
+			error: false
 		};
 		this.onToogleRandomChar = this.onToogleRandomChar.bind(this);
+	}
+	componentDidCatch() {
+		this.setState({
+			error: true
+		})
+	}
+	onCharSelected = (id) => {
+		this.setState({
+			selectedChar: id
+		})
 	}
 	onToogleRandomChar() {
 		const { randomCharVisible } = this.state;
 		this.setState({
-			randomCharVisible: !randomCharVisible
+			randomCharVisible: !randomCharVisible,
 		})
 	}
 	render() {
@@ -47,7 +59,10 @@ export default class App extends Component {
 		padding: 10px;
 		margin-bottom: 15px;`;
 
-		const { randomCharVisible } = this.state;
+		const { randomCharVisible, error } = this.state;
+		if (error) {
+			return <ErrorMessage />
+		}
 		return (
 			<>
 				<Container>
@@ -62,10 +77,10 @@ export default class App extends Component {
 					</Row>
 					<Row>
 						<Col>
-							<ItemList />
+							<ItemList onCharSelected={this.onCharSelected} />
 						</Col>
 						<Col>
-							<CharDetails />
+							<CharDetails charId={this.state.selectedChar} />
 						</Col>
 					</Row>
 				</Container>

@@ -5,28 +5,36 @@ import Loader from '../loader/loader';
 import ErrorMessage from '../../components/Error/error';
 
 export default class RandomChar extends Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			char: {},
-			loading: true,
-			error: false
-		}
-		this.updateChar()
-	}
+
 	gotService = new ThronesApi();
+	state = {
+		char: {},
+		loading: true,
+		error: false
+	};
+
+	componentDidMount() {
+		this.updateChar();
+		this.changeTimer = setInterval(this.updateChar, 20000);
+	}
+
+	componentWillUnmount() {
+		clearInterval(this.changeTimer);
+	}
+
 	onError = (err) => {
 		this.setState({
 			loading: false,
 			error: true
 		})
 	}
-	updateChar() {
+
+	updateChar = () => {
 		const id = Math.floor(Math.random() * 140 + 25);
 		// const id = 13000;
 		this.gotService.getCharacter(id)
 			.then((char) => {
-				console.log(char);
+
 				this.setState({
 					char,
 					loading: false

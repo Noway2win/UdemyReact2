@@ -10,7 +10,7 @@ export default class ThronesApi {
 		return await responce.json();
 	}
 	async getAllChar() {
-		const chars = await this.getResource('/characters');
+		const chars = await this.getResource('/characters?page=5&pageSize=10');
 		return chars.map(this._transformChar);
 	}
 	async getCharacter(id) {
@@ -42,7 +42,7 @@ export default class ThronesApi {
 		}
 		return prop;
 	}
-	_transformChar(char) {
+	_transformChar = (char) => {
 		const { name, gender, born, died, culture } = char;
 		return {
 			name: this._unSet(name),
