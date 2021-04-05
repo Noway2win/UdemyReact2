@@ -1,19 +1,24 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
-import ThronesApi from '../../services/getRequest';
+
 import Loader from '../loader/loader';
 
-export default class ItemList extends Component {
-	gotService = new ThronesApi();
+const ListGroup = styled.ul`
+cursor: pointer;
+width: 100%;
+background: white;
+border-radius: 5px;`;
 
+export default class ItemList extends Component {
 	state = {
-		charList: null
+		itemList: null
 	}
 
 	componentDidMount() {
-		this.gotService.getAllChar()
-			.then((charList) => this.setState({
-				charList
+		const { getData } = this.props;
+		getData()
+			.then((itemList) => this.setState({
+				itemList
 			}))
 	}
 
@@ -24,26 +29,22 @@ export default class ItemList extends Component {
 		line-height: 2;
 		border-bottom: solid 1px black;
 		padding: 15px;`;
-		return list.map((item, i) => {
-			return <ListItem key={i}
-				onClick={() => { this.props.onCharSelected(41 + i) }}
+		return list.map((item) => {
+			console.log(item);
+			return <ListItem key={item.id}
+				onClick={() => { this.props.onItemSelected(item.id) }}
 			>{item.name}</ListItem>
 		})
 	}
+
 	render() {
-		const ListGroup = styled.ul`
-		cursor: pointer;
-		width: 100%;
-		background: white;
-		border-radius: 5px;`;
 
+		const { itemList } = this.state;
 
-		const { charList } = this.state;
-
-		if (!charList) {
+		if (!itemList) {
 			return <Loader />
 		}
-		const items = this.renderItems(charList);
+		const items = this.renderItems(itemList);
 		return (
 			<ListGroup>
 				{items}

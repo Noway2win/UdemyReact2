@@ -4,7 +4,8 @@ import Header from '../header';
 import RandomChar from '../randomChar';
 import ItemList from '../itemList';
 import CharDetails from '../charDetails';
-import ErrorMessage from '../Error/error'
+import ErrorMessage from '../Error/error';
+import ThronesApi from '../../services/getRequest';
 
 
 export default class App extends Component {
@@ -13,10 +14,12 @@ export default class App extends Component {
 		this.state = {
 			randomCharVisible: true,
 			selectedChar: null,
+			selectedBook: null,
 			error: false
 		};
 		this.onToogleRandomChar = this.onToogleRandomChar.bind(this);
 	}
+	gotService = new ThronesApi();
 	componentDidCatch() {
 		this.setState({
 			error: true
@@ -27,10 +30,16 @@ export default class App extends Component {
 			selectedChar: id
 		})
 	}
+	onBookSelected = (id) => {
+		this.setState({
+			selectedBook: id
+		})
+	}
 	onToogleRandomChar() {
 		const { randomCharVisible } = this.state;
 		this.setState({
 			randomCharVisible: !randomCharVisible,
+
 		})
 	}
 	render() {
@@ -77,10 +86,15 @@ export default class App extends Component {
 					</Row>
 					<Row>
 						<Col>
-							<ItemList onCharSelected={this.onCharSelected} />
+							<ItemList getData={this.gotService.getAllChar} onItemSelected={this.onCharSelected} />
 						</Col>
 						<Col>
 							<CharDetails charId={this.state.selectedChar} />
+						</Col>
+					</Row>
+					<Row>
+						<Col>
+							<ItemList getData={this.gotService.getAllBooks} onItemSelected={this.onBookSelected} />
 						</Col>
 					</Row>
 				</Container>

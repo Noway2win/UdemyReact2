@@ -9,50 +9,55 @@ export default class ThronesApi {
 		}
 		return await responce.json();
 	}
-	async getAllChar() {
+	getAllChar = async () => {
 		const chars = await this.getResource('/characters?page=5&pageSize=10');
-		return chars.map(this._transformChar);
+		return chars.map(ThronesApi._transformChar);
 	}
-	async getCharacter(id) {
+	getCharacter = async (id) => {
 		const char = await this.getResource(`/characters/${id}`);
-		return this._transformChar(char);
+		return ThronesApi._transformChar(char);
 	}
-	async getAllBooks() {
+	getAllBooks = async () => {
 		const res = await this.getResource(`/books/`);
-		return res.map(this._transformBook);
+		return res.map(ThronesApi._transformBook);
 	}
 
-	async getBook(id) {
+	getBook = async (id) => {
 		const book = await this.getResource(`/books/${id}/`);
-		return this._transformBook(book);
+		return ThronesApi._transformBook(book);
 	}
-	async getAllHouses() {
+	getAllHouses = async () => {
 		const res = await this.getResource(`/houses/`);
-		return res.map(this._transformHouse);
+		return res.map(ThronesApi._transformHouse);
 	}
 
-	async getHouse(id) {
+	getHouse = async (id) => {
 		const house = this.getResource(`/houses/${id}/`);
-		return this._transformHouse(house);
+		return ThronesApi._transformHouse(house);
 	}
 
-	_unSet(prop) {
+	static _unSet(prop) {
 		if (prop === '') {
 			return 'Unknown';
 		}
 		return prop;
 	}
-	_transformChar = (char) => {
-		const { name, gender, born, died, culture } = char;
+	static _transformUrl = (url) => {
+		const id = url.match(/[^/]+$/)[0];
+		return id;
+	}
+	static _transformChar = (char) => {
+		const { name, gender, born, died, culture, url } = char;
 		return {
-			name: this._unSet(name),
-			gender: this._unSet(gender),
-			born: this._unSet(born),
-			died: this._unSet(died),
-			culture: this._unSet(culture)
+			name: ThronesApi._unSet(name),
+			gender: ThronesApi._unSet(gender),
+			born: ThronesApi._unSet(born),
+			died: ThronesApi._unSet(died),
+			culture: ThronesApi._unSet(culture),
+			id: ThronesApi._transformUrl(url)
 		}
 	}
-	_transformHouse(house) {
+	static _transformHouse(house) {
 		return {
 			name: house.name,
 			region: house.region,
@@ -63,7 +68,7 @@ export default class ThronesApi {
 		};
 	}
 
-	_transformBook(book) {
+	static _transformBook(book) {
 		return {
 			name: book.name,
 			numberOfPages: book.numberOfPages,
